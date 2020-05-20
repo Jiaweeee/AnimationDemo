@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BlurringView">
+        <attr name="blurRadius" format="integer"/>
+        <attr name="downsampleFactor" format="integer"/>
+        <attr name="overlayColor" format="color"/>
+    </declare-styleable>
+    <declare-styleable name="PieChart">
+        <attr name="showText" format="boolean"/>
+        <attr name="labelPosition" format="integer"/>
+    </declare-styleable>
+</resources>
