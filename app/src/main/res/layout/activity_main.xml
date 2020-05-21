@@ -10,14 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="fitXY"
-        android:src="@drawable/bg_1" />
+        android:src="@drawable/sample_map_background" />
 
     <include
         android:id="@+id/blurring_view_layout"
         layout="@layout/blurring_view_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        />
+        android:layout_height="400dp"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>
