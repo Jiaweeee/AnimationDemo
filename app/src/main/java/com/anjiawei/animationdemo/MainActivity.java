@@ -2,6 +2,7 @@ package com.anjiawei.animationdemo;
 
 
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -56,14 +57,15 @@ public class MainActivity extends AppCompatActivity {
     private void setListener() {
         mBlurredView.getViewTreeObserver().addOnGlobalLayoutListener(() -> mBlurringView.invalidate());
         mDragBar.setOnTouchListener(new View.OnTouchListener() {
-            private int mLastX;
             private int mLastY;
             private boolean mIsGoingUp = false;
+            private static final float MIN_HEIGHT_RATIO = 0.2F;
+            private static final float MAX_HEIGHT_RATIO = 0.8F;
+            private static final float DEFAULT_HEIGHT_RATIO = 0.5F;
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        mLastX = (int) event.getRawX();
                         mLastY = (int) event.getRawY();
                         break;
                     case MotionEvent.ACTION_MOVE:
@@ -76,17 +78,32 @@ public class MainActivity extends AppCompatActivity {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        mDefaultHeight = mBlurredView.getHeight() / 2;
-                        mMaxHeight = mBlurredView.getHeight() * 3 / 4;
-                        mMinHeight = mBlurredView.getHeight() / 5;
-                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mPanelLayout.getLayoutParams();
                         int height = mPanelLayout.getHeight();
+                        int blurredViewHeight = mBlurredView.getHeight();
+                        int defaultHeight = (int) (blurredViewHeight * DEFAULT_HEIGHT_RATIO);
+                        int maxHeight = (int) (blurredViewHeight * MAX_HEIGHT_RATIO);
+                        int minHeight = (int) (blurredViewHeight * MIN_HEIGHT_RATIO);
                         if (mIsGoingUp) {
-                            params.height = (height > mDefaultHeight) ? mMaxHeight : mDefaultHeight;
+                            if (height >= 0 && height < minHeight) {
+                                performAnimation(height, minHeight);
+                            } else if (height >= minHeight && height < defaultHeight) {
+                                performAnimation(height, defaultHeight);
+                            } else if (height >= defaultHeight && height < maxHeight) {
+                                performAnimation(height, maxHeight);
+                            } else if (height >= maxHeight && height <= blurredViewHeight) {
+                                performAnimation(height, maxHeight);
+                            }
                         } else {
-                            params.height = (height > mDefaultHeight) ? mDefaultHeight : mMinHeight;
+                            if (height >= 0 && height < minHeight) {
+                                performAnimation(height, minHeight);
+                            } else if (height >= minHeight && height < defaultHeight) {
+                                performAnimation(height, minHeight);
+                            } else if (height >= defaultHeight && height <= maxHeight) {
+                                performAnimation(height, defaultHeight);
+                            } else if (height >= maxHeight && height <= blurredViewHeight) {
+                                performAnimation(height, maxHeight);
+                            }
                         }
-                        mPanelLayout.setLayoutParams(params);
                         break;
                     default:
                         break;
@@ -94,5 +111,20 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void performAnimation(int start, int end) {
+        ValueAnimator va = ValueAnimator.ofInt(start, end);
+        va.setDuration(300);
+        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int height = (int) animation.getAnimatedValue();
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mPanelLayout.getLayoutParams();
+                params.height = height;
+                mPanelLayout.setLayoutParams(params);
+            }
+        });
+        va.start();
     }
 }
