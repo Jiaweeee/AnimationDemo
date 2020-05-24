@@ -12,11 +12,13 @@
         android:scaleType="fitXY"
         android:src="@drawable/sample_map_background" />
 
+
     <include
         android:id="@+id/blurring_view_layout"
         layout="@layout/blurring_view_layout"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="0dp"
         android:layout_alignParentBottom="true" />
+
 
 </RelativeLayout>
